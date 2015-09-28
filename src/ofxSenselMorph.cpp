@@ -67,7 +67,7 @@ void ofxSenselMorph::update(){
         
         SenselContact tempContact;
         tempContact.id = contacts[i].id;
-        tempContact.force = force;
+        tempContact.force = ofMap(force,0, 65536,0,1);
         tempContact.position.x = ofMap(x_mm, 0, getSensorWidth(), 0, 1);
         tempContact.position.y = ofMap(y_mm, 0, getSensorHeight(), 0, 1);
         tempContact.majorAxis = contacts[i].major_axis_mm;
@@ -81,6 +81,8 @@ void ofxSenselMorph::update(){
 
 void ofxSenselMorph::draw(){
     
+    //This is ugly below...just threw it together...will refactor later
+    
     ofSetCircleResolution(60);
     for (int i=0; i< numContacts; i++){
         ofSetColor(255, ofMap(i, 0, numContacts, 0, 255), 0);
@@ -92,7 +94,7 @@ void ofxSenselMorph::draw(){
         
         //ofLine(curPoint.x, curPoint.y, curPoint.x-prevPoint.x, curPoint.y-prevPoint.y);
         
-        ofSetColor(255, ofMap(i, 0, numContacts, 0, 255), 0);
+        ofSetColor(255, ofMap(contacts[i].total_force, 0, 65536, 255, 0), 0);
         ofFill();
         ofPushMatrix();
         ofTranslate(curPoint.x, curPoint.y);
