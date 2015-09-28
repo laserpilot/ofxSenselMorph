@@ -10,9 +10,9 @@
 
 void ofxSenselMorph::setup(){
     if (senselOpenConnection(0)) {
-        cout<<"Unable to open Sensel Sensor!"<<endl;
-    }else{
         cout<<"Sensel connection established"<<endl;
+    }else{
+        cout<<"Unable to establish Sensel connection"<<endl;
     }
     
     senselSetFrameContentControl(SENSEL_FRAME_CONTACTS_FLAG);
@@ -28,6 +28,8 @@ void ofxSenselMorph::update(){
     senselContacts.clear();
     
     for(int i=0; i< numContacts; i++){
+        
+        //LEAVING THIS ALL FOR DEBUG RIGHT NOW!!
         int force = contacts[i].total_force;
         float x_mm = contacts[i].x_pos_mm;
         float y_mm = contacts[i].y_pos_mm;
@@ -64,9 +66,15 @@ void ofxSenselMorph::update(){
         
         
         SenselContact tempContact;
-        tempContact.total_force = force;
-        tempContact.x_pos = x_mm;
-        tempContact.y_pos = y_mm;
+        tempContact.id = contacts[i].id;
+        tempContact.force = force;
+        tempContact.position.x = ofMap(x_mm, 0, getSensorWidth(), 0, 1);
+        tempContact.position.y = ofMap(y_mm, 0, getSensorHeight(), 0, 1);
+        tempContact.majorAxis = contacts[i].major_axis_mm;
+        tempContact.minorAxis = contacts[i].minor_axis_mm;
+        tempContact.orientation = contacts[i].orientation_degrees;
+        
+        senselContacts.push_back(tempContact);
         
     }
 }
