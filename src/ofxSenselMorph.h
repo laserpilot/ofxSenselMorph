@@ -16,7 +16,9 @@ class ofxSenselMorph{
 public:
     struct SenselContact{
         
-        uid_t  uid;
+        uid_t  uid; //Static unique touch id. Doesn't reset on build. Doesn't seem to wrap.
+        //Note (MR): Trying to get touchid similiar to iOS
+        int touchId;
         //uint16 x_pos;  // raw x position
         //uint16 y_pos;  // raw y position
         
@@ -51,4 +53,9 @@ public:
     
     
     void close();
+
+//Note (MR): Trying to get touchid similiar to iOS
+private:
+    static int touchIdCounter;
+    bool startTouchId;
 };

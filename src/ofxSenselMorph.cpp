@@ -8,6 +8,8 @@
 
 #include "ofxSenselMorph.h"
 
+int ofxSenselMorph::touchIdCounter = 0;
+
 void ofxSenselMorph::setup(){
     if (senselOpenConnection(0)) {
         cout<<"Sensel connection established"<<endl;
@@ -20,9 +22,15 @@ void ofxSenselMorph::setup(){
     
     numContacts = 0;
     
+    //Note (MR): Trying to get touchid similiar to iOS
+    startTouchId = false;
+
+    
 }
 
 void ofxSenselMorph::update(){
+    
+    
     numContacts = senselReadContacts(contacts);
     
     senselContacts.clear();
@@ -40,6 +48,8 @@ void ofxSenselMorph::update(){
         
         int id = contacts[i].id;
         int event_type = contacts[i].type;
+        
+    
         
         char* event;
         switch (event_type)
@@ -60,10 +70,29 @@ void ofxSenselMorph::update(){
                 event = "error";
         }
         
-        printf("Contact ID %d, event=%s, mm coord: (%f, %f), force=%d, " \
+       // printf("Contact ID %d, event=%s, mm coord: (%f, %f), force=%d, " \
                "major=%f, minor=%f, orientation=%f\n",
-               id, event, x_mm, y_mm, force, major, minor, orientation);
+       //        id, event, x_mm, y_mm, force, major, minor, orientation);
         
+        
+        //Note (MR): Trying to get touchid similiar to iOS
+        if (i > 0) {
+            
+            startTouchId = true;
+        
+        } else {
+            
+            startTouchId = false;
+        }
+        
+        if (startTouchId) {
+            touchIdCounter++;
+
+        } else {
+            touchIdCounter = 0;
+        }
+        
+        //Note (MR) End
         
         SenselContact tempContact;
         tempContact.id = contacts[i].id;
@@ -73,10 +102,14 @@ void ofxSenselMorph::update(){
         tempContact.majorAxis = contacts[i].major_axis_mm;
         tempContact.minorAxis = contacts[i].minor_axis_mm;
         tempContact.orientation = contacts[i].orientation_degrees;
+        //Note (MR)//
+        tempContact.touchId = touchIdCounter; //Touch Id Similiar to iOS
         
         senselContacts.push_back(tempContact);
-        
+
     }
+    
+    
 }
 
 void ofxSenselMorph::draw(){
@@ -84,7 +117,8 @@ void ofxSenselMorph::draw(){
     //This is ugly below...just threw it together...will refactor later
     
     ofSetCircleResolution(60);
-    for (int i=0; i< numContacts; i++){
+    for (int i = 0; i < numContacts; i++){
+        
         ofSetColor(255, ofMap(i, 0, numContacts, 0, 255), 0);
         ofPoint curPoint = ofPoint(ofMap(contacts[i].x_pos_mm, 0, getSensorWidth(), 0, ofGetWidth()), ofMap(contacts[i].y_pos_mm, 0, getSensorHeight(), 0, ofGetHeight()));
         
@@ -110,7 +144,10 @@ void ofxSenselMorph::draw(){
         ofNoFill();
         ofSetColor(255);
         ofCircle(ofMap(contacts[i].x_pos_mm, 0, getSensorWidth(), 0, ofGetWidth()), ofMap(contacts[i].y_pos_mm, 0, getSensorHeight(), 0, ofGetHeight()), ofMap(contacts[i].total_force, 0, 65536, 0, 200));
+    
 
+
+        
     }
     
 }
