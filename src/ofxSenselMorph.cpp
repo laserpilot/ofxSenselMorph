@@ -41,38 +41,42 @@ void ofxSenselMorph::update(){
         int id = contacts[i].id;
         int event_type = contacts[i].type;
         
-        char* event;
+        string event;
         switch (event_type)
         {
             case SENSEL_EVENT_CONTACT_INVALID:
-                event = "invalid";
+                event = "Invalid";
                 break;
             case SENSEL_EVENT_CONTACT_START:
-                event = "start";
+                event = "Start";
                 break;
             case SENSEL_EVENT_CONTACT_MOVE:
-                event = "move";
+                event = "Move";
                 break;
             case SENSEL_EVENT_CONTACT_END:
-                event = "end";
+                event = "End";
                 break;
             default:
-                event = "error";
+                event = "Error";
         }
         
         printf("Contact ID %d, event=%s, mm coord: (%f, %f), force=%d, " \
                "major=%f, minor=%f, orientation=%f\n",
-               id, event, x_mm, y_mm, force, major, minor, orientation);
+               id, event.c_str(), x_mm, y_mm, force, major, minor, orientation);
         
         
         SenselContact tempContact;
-        tempContact.id = contacts[i].id;
+        
+        tempContact.contactID = id;
         tempContact.force = ofMap(force,0, 65536,0,1);
         tempContact.position.x = ofMap(x_mm, 0, getSensorWidth(), 0, 1);
         tempContact.position.y = ofMap(y_mm, 0, getSensorHeight(), 0, 1);
         tempContact.majorAxis = contacts[i].major_axis_mm;
         tempContact.minorAxis = contacts[i].minor_axis_mm;
         tempContact.orientation = contacts[i].orientation_degrees;
+        tempContact.contactType = event;
+        
+        
         
         senselContacts.push_back(tempContact);
         
@@ -84,32 +88,27 @@ void ofxSenselMorph::draw(){
     //This is ugly below...just threw it together...will refactor later
     
     ofSetCircleResolution(60);
-    for (int i=0; i< numContacts; i++){
-        ofSetColor(255, ofMap(i, 0, numContacts, 0, 255), 0);
-        ofPoint curPoint = ofPoint(ofMap(contacts[i].x_pos_mm, 0, getSensorWidth(), 0, ofGetWidth()), ofMap(contacts[i].y_pos_mm, 0, getSensorHeight(), 0, ofGetHeight()));
+    for (int i=0; i< senselContacts.size(); i++){
+        ofSetColor(255, ofMap(i, 0, senselContacts.size(), 0, 255), 0);
+        ofPoint curPoint = ofPoint(ofMap(senselContacts[i].position.x, 0, 1, 0, ofGetWidth()), ofMap(senselContacts[i].position.y, 0, 1, 0, ofGetHeight()));
         
-        //ofPoint prevPoint = ofPoint(ofMap(contacts[i].dx, 0, getSensorWidth(), 0, ofGetWidth()), ofMap(contacts[i].dy, 0, getSensorHeight(), 0, ofGetHeight()));
-        
-        //cout<<prevPoint<<endl;
-        
-        //ofLine(curPoint.x, curPoint.y, curPoint.x-prevPoint.x, curPoint.y-prevPoint.y);
-        
-        ofSetColor(255, ofMap(contacts[i].total_force, 0, 65536, 255, 0), 0);
+        ofSetColor(255, ofMap(senselContacts[i].force, 0, 1, 255, 0), 0);
         ofFill();
         ofPushMatrix();
         ofTranslate(curPoint.x, curPoint.y);
-        ofRotateZ(contacts[i].orientation_degrees);
-        ofEllipse(0,0, ofMap(contacts[i].minor_axis_mm, 0, 30, 0, 200),  ofMap(contacts[i].major_axis_mm, 0, 30, 0, 200));
+        ofRotateZ(senselContacts[i].orientation);
+        ofEllipse(0,0, ofMap(senselContacts[i].minorAxis, 0, 30, 0, 200),  ofMap(senselContacts[i].majorAxis, 0, 30, 0, 200));
         ofSetColor(255);
-        ofLine(0,0, ofMap(contacts[i].minor_axis_mm, 0, 30, 0, 200)/2, 0);
+        ofLine(0,0, ofMap(senselContacts[i].minorAxis, 0, 30, 0, 200)/2, 0);
         ofSetColor(0);
-        ofLine(0,0, 0, -ofMap(contacts[i].major_axis_mm, 0, 30, 0, 200)/2);
+        ofLine(0,0, 0, -ofMap(senselContacts[i].majorAxis, 0, 30, 0, 200)/2);
         ofPopMatrix();
         ofDrawBitmapStringHighlight(ofToString(i), curPoint.x +10, curPoint.y+10);
+        ofDrawBitmapStringHighlight(ofToString(senselContacts[i].contactID), curPoint.x +10, curPoint.y+30);
         
         ofNoFill();
         ofSetColor(255);
-        ofCircle(ofMap(contacts[i].x_pos_mm, 0, getSensorWidth(), 0, ofGetWidth()), ofMap(contacts[i].y_pos_mm, 0, getSensorHeight(), 0, ofGetHeight()), ofMap(contacts[i].total_force, 0, 65536, 0, 200));
+        ofCircle(curPoint, ofMap(contacts[i].total_force, 0, 65536, 0, 200));
 
     }
     

@@ -16,11 +16,15 @@ public:
     snakeCharmer();
     
     void setup(int _vecSize);
-    void update(ofPoint _pt, float widthPt);
+    void update(ofPoint _pt, float widthPt, int snakeID, bool activated);
     void draw( int _x, int _y, ofColor outside, ofColor mesh);
     void setMaxVelScale(int _maxVelScale);
     void setNoiseScale(float _noiseScale);
     void setNoiseSpeed(float _noiseSpeed);
+    int getSnakeID() { return snakeID; }
+    bool getSnakeActive() {return activated; }
+    
+    void resetSnake();
     
     bool drawLine;
     bool drawHead;
@@ -46,6 +50,9 @@ public:
     vector <ofPoint> pts;
     vector <float> widthPts;
     int prevVecSize;
+    
+    int snakeID;
+    bool activated;
     
     //ofPolyline polyLine;
 

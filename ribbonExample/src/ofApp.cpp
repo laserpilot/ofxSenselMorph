@@ -7,8 +7,10 @@ void ofApp::setup(){
     for (int i = 0; i<numSnakes; i++) {
         snakeCharmer tempSnake;
         
-        tempSnake.setup(50+ofRandom(-10,20));
-        tempSnake.setNoiseSpeed(ofRandom(0.001, 0.013));
+        
+        tempSnake.setup(200+ofRandom(-10,20));
+        tempSnake.setNoiseSpeed(ofRandom(0.001, 0.15));
+        tempSnake.setNoiseScale(2);
         snakes.push_back(tempSnake);
     }
     
@@ -23,10 +25,37 @@ void ofApp::update(){
         ofPoint curPos = ofPoint(ofMap(sensel.getContacts()[i].position.x,0,1,0,ofGetWidth()), ofMap(sensel.getContacts()[i].position.y,0,1,0,ofGetHeight()));
         //snakes[i].setMaxVelScale(ofMap(sensel.getContacts()[i].force, 0, 1, 0,700));
         //cout<<sensel.getContacts()[i].force<<endl;
-        snakes[i].update(curPos, sensel.getContacts()[i].force);
-        cout<<(int)sensel.getContacts()[i].id<<endl;
+        
+        
+        //if there is a snake that doesn't exist with that contact ID - create it and update it
+        //if a snake already exists - update it
+        //if the snake doesn't match an existing contact ID - remove it
+        
+        bool bContactApplied = false;
+        
+        for (int j=0; j<snakes.size(); j++) {
+            
+            if (sensel.getContacts()[i].contactType=="Start" && !snakes[j].activated && !bContactApplied) {
+                snakes[j].update(curPos, sensel.getContacts()[i].force, sensel.getContacts()[i].contactID, true);
+                bContactApplied = true;
+            }
+            
+            if (sensel.getContacts()[i].contactType=="Move" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID()) {
+                snakes[j].update(curPos, sensel.getContacts()[i].force, sensel.getContacts()[i].contactID, true);
+                bContactApplied = true;
+            }
+            
+            if (sensel.getContacts()[i].contactType=="End" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID()) {
+                snakes[j].resetSnake();
+            }
+            
+            
+        }
+        
+        
     }
     
+
     
 }
 

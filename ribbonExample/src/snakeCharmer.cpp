@@ -33,12 +33,19 @@ void snakeCharmer::setup(int _vecSize){
     maxVelScale = 80;
     prevVecSize=0;
     
+    snakeID = -1;
+    activated = false;
+    
 }
 
 //-------------------------------------------------------------
-void snakeCharmer::update(ofPoint _pt, float widthPt){
+void snakeCharmer::update(ofPoint _pt, float widthPt, int _snakeID, bool _activated){
     //cout<<prevPt.distance(_pt)<<endl;
     //scale = ofMap(prevPt.distance(_pt),0,500,2, 40);
+    
+    snakeID = _snakeID;
+    activated = _activated;
+    
     pts.push_back(_pt);
     if(pts.size()>vecSize){
         pts.erase(pts.begin(), pts.begin()+1);//(vecSize-prevVecSize));
@@ -68,7 +75,7 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
     ofBeginShape();
     for(int i=0; i<pts.size(); i++){
         if(i==pts.size()-1){
-            ofSetColor(0,0,0);
+            //ofSetColor(0,0,0);
             //ofCircle(pts[i]+5, 10);
             //ofCircle(pts[i]-5, 10);
         }
@@ -93,6 +100,8 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
         //int scale = 5;
         ofVec3f     a, b, tangent, normal, mappedA, mappedB;
         for (int i=0; i<pts.size()-stepSize; i=i+stepSize){
+            
+            if (i>2) {
             a = polyLine.getVertices()[i];
             b = polyLine.getVertices()[i+stepSize];
             float newScale;
@@ -110,7 +119,7 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
             corner.x = a.x+ofClamp(ofDist(b.x,b.y,a.x,a.y),0,5)+normal.x*newScale+20*sin(noiseScale*ofSignedNoise((i*noiseSpeed)+ofGetElapsedTimef()));
             corner.y = a.y+ofClamp(ofDist(b.x,b.y,a.x,a.y),0,5)+normal.y*newScale+20*sin(noiseScale*ofSignedNoise((i*noiseSpeed)+ofGetElapsedTimef()));
             corner.z = a.z;
-            ofLine(a,corner);
+            ofLine(a+20*sin(noiseScale*ofSignedNoise((i*noiseSpeed)+ofGetElapsedTimef())),corner);
             normal = tangent.getRotated(-90,ofVec3f(0,0,1));
             normal.normalize();
             
@@ -122,7 +131,8 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
             //corner =  a + normal*scale + 5*sin(1+(i*0.05)*ofGetElapsedTimef());
             //corner.x = corner.x * sin(.5*ofGetElapsedTimef())*sin(ofGetElapsedTimef());
             //corner.y = corner.y * cos(.7*ofGetElapsedTimef())*cos(ofGetElapsedTimef());
-            ofLine(a,corner);
+            ofLine(a+20*sin(noiseScale*ofSignedNoise((i*noiseSpeed)+ofGetElapsedTimef())),corner);
+            }
         }
     }
     // SKINNNN
@@ -136,6 +146,8 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
         //outLines.addVertex(pts[1]);
         //inLines.addVertex(pts[1]);
         for (int i=0; i<pts.size()-stepSize; i=i+stepSize){
+            
+            if(i>2){ //wonky on the first one...so skip it...need 2 for normalizing anyway
             a = polyLine.getVertices()[i];
             b = polyLine.getVertices()[i+stepSize];
             float newScale;
@@ -168,6 +180,7 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
             //corner.y = corner.y * cos(.7*ofGetElapsedTimef())*cos(ofGetElapsedTimef());
             outLines.addVertex(corner);
             //ofLine(a,corner);
+            }
         }
         //outLines.addVertex(pts[vecSize-1]);
         //inLines.addVertex(pts[vecSize-1]);
@@ -252,6 +265,14 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
     }
     
     ofPopMatrix();
+}
+
+void snakeCharmer::resetSnake(){
+    pts.clear();
+    widthPts.clear();
+    
+    activated = false;
+    snakeID = -1;
 }
 
 
