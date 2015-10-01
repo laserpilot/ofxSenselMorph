@@ -49,6 +49,9 @@ public:
     
     vector <ofPoint> pts;
     vector <float> widthPts;
+    
+    float forcePt;
+    
     int prevVecSize;
     
     int snakeID;

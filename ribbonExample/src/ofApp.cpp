@@ -10,7 +10,7 @@ void ofApp::setup(){
         
         tempSnake.setup(200+ofRandom(-10,20));
         tempSnake.setNoiseSpeed(ofRandom(0.001, 0.15));
-        tempSnake.setNoiseScale(2);
+        tempSnake.setNoiseScale(1);
         snakes.push_back(tempSnake);
     }
     
@@ -31,22 +31,25 @@ void ofApp::update(){
         //if a snake already exists - update it
         //if the snake doesn't match an existing contact ID - remove it
         
+        //Not the smartest way to do this
+        
         bool bContactApplied = false;
         
         for (int j=0; j<snakes.size(); j++) {
             
             if (sensel.getContacts()[i].contactType=="Start" && !snakes[j].activated && !bContactApplied) {
                 snakes[j].update(curPos, sensel.getContacts()[i].force, sensel.getContacts()[i].contactID, true);
-                bContactApplied = true;
+                bContactApplied = true; //make sure we only use each contact once...
             }
             
-            if (sensel.getContacts()[i].contactType=="Move" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID()) {
+            if (sensel.getContacts()[i].contactType=="Move" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID() && !bContactApplied) {
                 snakes[j].update(curPos, sensel.getContacts()[i].force, sensel.getContacts()[i].contactID, true);
                 bContactApplied = true;
             }
             
-            if (sensel.getContacts()[i].contactType=="End" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID()) {
+            if (sensel.getContacts()[i].contactType=="End" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID() && !bContactApplied) {
                 snakes[j].resetSnake();
+                bContactApplied = true;
             }
             
             
@@ -61,7 +64,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor::black, ofColor::gray);
+    ofBackgroundGradient(ofColor::gray, ofColor::black);
     
     for (int i=0; i<sensel.getContacts().size(); i++) {
     

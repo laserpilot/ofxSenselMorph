@@ -58,14 +58,22 @@ void snakeCharmer::update(ofPoint _pt, float widthPt, int _snakeID, bool _activa
     
     prevVecSize = vecSize;
     prevPt = _pt;
+    
+    forcePt = widthPt;
 }
 
 //-------------------------------------------------------------
 void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
     
     ofPolyline polyLine;
+    
     polyLine.addVertices(pts);
-    polyLine = polyLine.getSmoothed(4);
+    //if(forcePt>0.1){
+
+        polyLine = polyLine.getSmoothed(ofMap(forcePt, 0, .5, 6, 1));
+        cout<<forcePt<<endl;
+        pts = polyLine.getVertices();
+    //}
     
     
     ofPushMatrix();
