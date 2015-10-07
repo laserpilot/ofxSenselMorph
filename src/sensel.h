@@ -144,8 +144,16 @@ extern "C" {
     int16 y;
     int16 z;
   },
-  accel_data_t);
+  accel_data_raw_t);
 
+  PACK(
+  typedef struct
+  {
+    float x;
+    float y;
+    float z;
+  },
+  accel_data_t);
 
   bool senselOpenConnection(char* com_port); // Pass in NULL to do auto-detection
   bool senselSetFrameContentControl(uint8 content);
@@ -153,11 +161,13 @@ extern "C" {
   int  senselReadContacts(contact_t *contacts);
   bool senselStopScanning();
   void senselCloseConnection();
-    
+  void senselSetLEDBrightness(int idx, uint8 brightness);
+  void senselSetLEDBrightnessAll(uint8 brightness);
+  bool senselReadAccelerometerData(accel_data_t *accel_data);
+
     
     float getSensorWidth();
     float getSensorHeight();
-
 
 #ifdef __cplusplus
 }
