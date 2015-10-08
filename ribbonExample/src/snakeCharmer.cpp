@@ -36,6 +36,8 @@ void snakeCharmer::setup(int _vecSize){
     snakeID = -1;
     activated = false;
     
+    ofSetLogLevel(OF_LOG_SILENT);
+    
 }
 
 //-------------------------------------------------------------
@@ -46,20 +48,41 @@ void snakeCharmer::update(ofPoint _pt, float widthPt, int _snakeID, bool _activa
     snakeID = _snakeID;
     activated = _activated;
     
-    pts.push_back(_pt);
-    if(pts.size()>vecSize){
-        pts.erase(pts.begin(), pts.begin()+1);//(vecSize-prevVecSize));
-    }
+    if (_pt.x>0 && _pt.y>0) { //if the point exists - then update
+        pts.push_back(_pt);
+        if(pts.size()>vecSize){
+            pts.erase(pts.begin(), pts.begin()+1);//(vecSize-prevVecSize));
+        }
 
-    widthPts.push_back(widthPt);
-    if(widthPts.size()>vecSize){
-        widthPts.erase(widthPts.begin(), widthPts.begin()+1);//(vecSize-prevVecSize));
+        widthPts.push_back(widthPt);
+        if(widthPts.size()>vecSize){
+            widthPts.erase(widthPts.begin(), widthPts.begin()+1);//(vecSize-prevVecSize));
+        }
+        
+        prevVecSize = vecSize;
+        prevPt = _pt;
+        
+        forcePt = widthPt;
+    }else{
+        //otherwise - delete points but leave it drawing...
+        if(!pts.empty()){
+            pts.erase(pts.begin(), pts.begin()+1);//(vecSize-prevVecSize));
+            //pts.pop_back();
+
+        }else{
+            pts.clear();
+        }
+        
+        if(!widthPts.empty()){
+            widthPts.erase(widthPts.begin(), widthPts.begin()+1);//(vecSize-prevVecSize));
+            
+            //widthPts.pop_back();
+        }else{
+            widthPts.clear();
+        }
     }
     
-    prevVecSize = vecSize;
-    prevPt = _pt;
     
-    forcePt = widthPt;
 }
 
 //-------------------------------------------------------------
@@ -71,7 +94,7 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
     //if(forcePt>0.1){
 
         polyLine = polyLine.getSmoothed(ofMap(forcePt, 0, .5, 6, 1));
-        cout<<forcePt<<endl;
+        //cout<<forcePt<<endl;
         pts = polyLine.getVertices();
     //}
     
@@ -276,11 +299,15 @@ void snakeCharmer::draw(int _x ,int _y, ofColor outside, ofColor meshColor){
 }
 
 void snakeCharmer::resetSnake(){
-    pts.clear();
-    widthPts.clear();
+    //pts.clear();
+    //widthPts.clear();
     
     activated = false;
     snakeID = -1;
+}
+
+void snakeCharmer::drawDebug(int idx){
+    ofDrawBitmapStringHighlight("Snake Size: " + ofToString(pts.size()), 20,20+20*idx);
 }
 
 

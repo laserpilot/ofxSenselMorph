@@ -60,9 +60,9 @@ void ofxSenselMorph::update(){
                 event = "Error";
         }
         
-        printf("Contact ID %d, event=%s, mm coord: (%f, %f), force=%d, " \
+        //printf("Contact ID %d, event=%s, mm coord: (%f, %f), force=%d, " \
                "major=%f, minor=%f, orientation=%f\n",
-               id, event.c_str(), x_mm, y_mm, force, major, minor, orientation);
+               //id, event.c_str(), x_mm, y_mm, force, major, minor, orientation);
         
         
         SenselContact tempContact;
@@ -117,7 +117,7 @@ void ofxSenselMorph::draw(){
         
         ofNoFill();
         ofSetColor(255);
-        ofCircle(curPoint, ofMap(senselContacts[i].force, 0, 65536, 0, 200));
+        ofCircle(curPoint, ofMap(senselContacts[i].force, 0, 1, 0, 200));
 
     }
     

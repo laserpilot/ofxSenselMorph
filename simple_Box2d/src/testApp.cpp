@@ -14,6 +14,7 @@ void testApp::setup() {
 	
     sensel.setup();
     
+    
     //add sounds
     sound[0].loadSound("perc1.mp3");
     sound[0].setLoop(false);
@@ -27,6 +28,8 @@ void testApp::setup() {
     sound[3].loadSound("perc4.mp3");
     sound[3].setLoop(false);
     sound[3].setMultiPlay(true);
+    
+    //other things to explore would be having the size of the circle effect which note is sounded, not just volume - small notes could be higher pitched and low notes would be lower
     
     //create boxes for the circles to collide with
     
@@ -44,7 +47,7 @@ void testApp::setup() {
 
 
     // register the listener so that we get the events
-        box2d.enableEvents();
+    box2d.enableEvents();
     ofAddListener(box2d.contactStartEvents, this, &testApp::contactStart);
     ofAddListener(box2d.contactEndEvents, this, &testApp::contactEnd);
     
@@ -142,6 +145,7 @@ void testApp::draw() {
 	
 	
 	string info = "";
+    info += "Press harder for larger circles - the larger they are, the louder they are\n";
     info += "Press space to clear\n";
 	info += "Press [c] for circles\n";
 	info += "Press [b] for blocks\n";
@@ -195,6 +199,12 @@ void testApp::contactStart(ofxBox2dContactArgs &e) {
             
             SoundData * aData = (SoundData*)e.a->GetBody()->GetUserData();
             PlayerData * bData = (PlayerData*)e.b->GetBody()->GetUserData();
+            
+            if (bData == NULL) {
+                PlayerData tempData;
+                tempData.radius = 50;
+                bData = &tempData;
+            }
             
             if(aData) {
                 aData->bHit = true;

@@ -24,6 +24,10 @@ public:
     int getSnakeID() { return snakeID; }
     bool getSnakeActive() {return activated; }
     
+    void drawDebug(int idx);
+    
+    
+
     void resetSnake();
     
     bool drawLine;
@@ -47,7 +51,7 @@ public:
     ofPoint pos;
     ofPoint prevPt;
     
-    vector <ofPoint> pts;
+   vector <ofPoint> pts;
     vector <float> widthPts;
     
     float forcePt;

@@ -49,7 +49,12 @@ void ofApp::update(){
             
             if (sensel.getContacts()[i].contactType=="End" && sensel.getContacts()[i].contactID== snakes[j].getSnakeID() && !bContactApplied) {
                 snakes[j].resetSnake();
+                snakes[j].update(ofPoint(-1,-1), 1, -1, false);
                 bContactApplied = true;
+            }
+            
+            if(!snakes[j].activated){
+                snakes[j].update(ofPoint(-1,-1), 1, -1, false);
             }
             
             
@@ -58,17 +63,21 @@ void ofApp::update(){
         
     }
     
-
-    
+for (int j=0; j<snakes.size(); j++) {
+    if(!snakes[j].activated){
+        snakes[j].update(ofPoint(-1,-1), 1, -1, false);
+    }
+}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackgroundGradient(ofColor::gray, ofColor::black);
     
-    for (int i=0; i<sensel.getContacts().size(); i++) {
+    for (int i=0; i<snakes.size(); i++) {
     
         snakes[i].draw(0, 0, ofColor(255, ofMap(i, 0, sensel.getContacts().size(), 0, 255), 0), ofColor(255, ofMap(i, 0, sensel.getContacts().size(), 0, 255), 0));
+        //snakes[i].drawDebug(i);
     }
     
     if (bDebug) {
