@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>48FABA79-FF55-46B6-86AA-8DCD027CF113</string>
 	<key>IDESourceControlProjectName</key>
-	<string>simpleExample</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>A990D8A40BCC5F359ACD41F75F072DCCD8034FFC</key>
 		<string>https://github.com/fakelove/ofxSenselMorph.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>simpleExample/simpleExample.xcodeproj</string>
+	<string>simpleExample/simpleExample.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>A990D8A40BCC5F359ACD41F75F072DCCD8034FFC</key>
